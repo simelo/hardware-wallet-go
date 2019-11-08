@@ -390,6 +390,18 @@ func DecodeResponseEntropyMessage(msg wire.Message) (*messages.Entropy, error) {
 	return nil, fmt.Errorf("calling DecodeResponseEntropyMessage with wrong message type: %s", messages.MessageType(msg.Kind))
 }
 
+func DecodeBitcoinTxRequestMessage(msg wire.Message) (*messages.BitcoinTxRequest, error) {
+	if msg.Kind == uint16(messages.MessageType_MessageType_BitcoinTxRequest) {
+		bitcoinTxRequest := &messages.BitcoinTxRequest{}
+		err := proto.Unmarshal(msg.Data, bitcoinTxRequest)
+		if err != nil {
+			return nil, err
+		}
+		return bitcoinTxRequest, nil
+	}
+	return nil, fmt.Errorf("calling DecodeBitcoinnTxRequestMessage with wrong message type: %s", messages.MessageType(msg.Kind))
+}
+
 // Does OS allow sync canceling via our custom libusb patches?
 func allowCancel() bool {
 	return runtime.GOOS != "freebsd"

@@ -922,3 +922,30 @@ func (d *Device) SetAutoPressButton(simulateButtonPress bool, simulateButtonType
 
 	return nil
 }
+
+func (d *Device) BitcoinSignTx(coinName string, inputsCount uint32, outputsCount uint32) (wire.Message, error) {
+	if err := d.Connect(); err != nil {
+		return wire.Message{}, err
+	}
+	defer d.Disconnect()
+
+	bitcoinSignTxChunks, err := MessageBitcoinSignTx(&coinName, inputsCount, outputsCount)
+	if err != nil {
+		return wire.Message{}, err
+	}
+
+	return d.Driver.SendToDevice(d.dev, bitcoinSignTxChunks)
+}
+
+func (d *Device) BitcoinTxAck(transactionType *messages.BitcoinTxAck_TransactionType) (wire.Message, error) {
+	if err := d.Connect(); err != nil {
+		return wire.Message{}, err
+	}
+	defer d.Disconnect()
+
+	bitcoinTxAckChunks, err := MessageBitcoinTxAck(transactionType)
+	if err != nil {
+		return wire.Message{}, err
+	}
+	return d.Driver.SendToDevice(d.dev, bitcoinTxAckChunks)
+}

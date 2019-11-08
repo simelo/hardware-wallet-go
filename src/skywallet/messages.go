@@ -372,3 +372,31 @@ func MessageSimulateButtonPress(buttonType ButtonType) (*bytes.Buffer, error) {
 	}
 
 }
+
+func MessageBitcoinSignTx(coinName *string, inputsCount uint32, outputsCount uint32) ([][64]byte, error) {
+	bitcoinSignTxMessage := &messages.BitcoinSignTx{
+		OutputsCount: &outputsCount,
+		InputsCount:  &inputsCount,
+		CoinName:     coinName,
+	}
+
+	data, err := proto.Marshal(bitcoinSignTxMessage)
+	if err != nil {
+		return [][64]byte{}, err
+	}
+
+	chunks := makeSkyWalletMessage(data, messages.MessageType_MessageType_BitcoinSignTx)
+	return chunks, nil
+}
+
+func MessageBitcoinTxAck(transactionType *messages.BitcoinTxAck_TransactionType) ([][64]byte, error) {
+	bitcoinTxAck := &messages.BitcoinTxAck{
+		Tx: transactionType,
+	}
+	data, err := proto.Marshal(bitcoinTxAck)
+	if err != nil {
+		return [][64]byte{}, err
+	}
+	chuncks := makeSkyWalletMessage(data, messages.MessageType_MessageType_BitcoinTxAck)
+	return chuncks, nil
+}
